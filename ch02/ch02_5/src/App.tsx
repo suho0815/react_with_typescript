@@ -13,10 +13,10 @@ import FileDrop from './pages/FileDrop'
 export default function App() {
   return(
     <div>
-      <EventListener/>
+      {/* <EventListener/>
       <OnClick/>
       <ReactOnClick/>
-      <DispatchEvent/>
+      <DispatchEvent/> */}
       <EventBubbling/>
       <StopPropagation/>
       <VariousInputs/>

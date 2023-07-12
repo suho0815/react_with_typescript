@@ -10,13 +10,13 @@ import './App.css'
 export default function App() {
   return (
     <main>
-      <CardContainer/>
-      <UserContainer/>
-      <AlignTest/>
-      <JustifyCenterTest/>
-      <MinMaxTest/>
-      <WrapTest/>
-      <DirectionTest/>
+      <DirectionTest />
+      <WrapTest />
+      <MinMaxTest />
+      <JustifyCenterTest />
+      <AlignTest />
+      <UserContainer />
+      <CardContainer />
     </main>
   )
 }

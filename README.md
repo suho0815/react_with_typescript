@@ -21,3 +21,5 @@
     - useEffect, useLayoutEffect 훅
     - useRef, useImperativeHandel 훅
     - useContext 훅
+
+5. 상태관리와 리덕스 패키지

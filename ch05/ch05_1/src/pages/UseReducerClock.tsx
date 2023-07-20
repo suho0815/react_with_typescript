@@ -1,5 +1,5 @@
 import {useReducer} from 'react'
-import {useSelector, useDispatch} from 'react-redux'
+import type { SetTodayAction } from '../store/actions'
 import type { AppState } from '../store'
 import {Div, Title, Subtitle} from '../components'
 import { useInterval } from '../hooks'

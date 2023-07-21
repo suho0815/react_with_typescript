@@ -3,11 +3,12 @@ import { useMemo } from "react";
 import { rootReducer } from "./rootReducer";
 // import logger from './logger'
 import logger from 'redux-logger'
+import thunk from 'redux-thunk'
 
 const useLogger = process.env.NODE_ENV !== 'production'
 
 const initializeStore = () => {
-  const middleware: any[] = []
+  const middleware: any[] = [thunk]
   if (useLogger) {
     middleware.push(logger)
   }

@@ -1,4 +1,4 @@
-import type * as T from './type'
+import type * as T from './types'
 
 export const setUser = (payload: T.State): T.SetUserAction => ({
   type: '@remoteUser/setUser',

@@ -1,1 +1,1 @@
-import type * as T from './type'
+import type * as T from './types'

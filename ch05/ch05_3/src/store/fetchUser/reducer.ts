@@ -1,4 +1,4 @@
-import * as T from './type'
+import * as T from './types'
 
 const initialState: T.State = {
   email: '',

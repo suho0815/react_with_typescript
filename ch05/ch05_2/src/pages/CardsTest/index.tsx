@@ -22,15 +22,9 @@ export default function CardsTest() {
   )
   const children = useMemo(
     () =>
-      cards.map(card => {
-        if (cards === undefined) {
-          // 데이터 로딩이 완료되지 않았을 때 표시할 내용 또는 로딩 상태 표시
-          return <div>Loading...</div>
-        } else{
-          <Card key={card.uuid} card={card} onRemove={removeCard(card.uuid)} />
-        }
-      }
-      ),
+      cards.map(card => (
+        <Card key={card.uuid} card={card} onRemove={removeCard(card.uuid)} />
+      )),
     [cards, removeCard]
   )
   useEffect(addCard, [addCard])

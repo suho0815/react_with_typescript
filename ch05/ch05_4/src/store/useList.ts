@@ -1,16 +1,18 @@
-import { useCallback } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import type { AppState } from "./AppState";
-import type { List } from "./commonTypes";
+import {useCallback} from 'react'
+import {useSelector, useDispatch} from 'react-redux'
+import type {AppState} from './AppState'
+import type {List} from './commonTypes'
+import type {DropResult} from 'react-beautiful-dnd'
 import * as LO from './listidOrders'
 import * as L from './listEntities'
 import * as C from '../store/cardEntities'
 import * as LC from '../store/listidCardidOrders'
+import * as U from '../utils'
 
 export const useLists = () => {
   const dispatch = useDispatch()
 
-  const lists = useSelector<AppState, List[]>(({listidOrders, listEntities}) => 
+  const lists = useSelector<AppState, List[]>(({listidOrders, listEntities}) =>
     listidOrders.map(uuid => listEntities[uuid])
   )
 
@@ -44,8 +46,8 @@ export const useLists = () => {
   )
 
   const onMoveList = useCallback(
-    (dragIndex:number, hoverIndex: number) => {
-      const newOrders = listidOrders.map((item, index) => 
+    (dragIndex: number, hoverIndex: number) => {
+      const newOrders = listidOrders.map((item, index) =>
         index === dragIndex
           ? listidOrders[hoverIndex]
           : index === hoverIndex
@@ -57,6 +59,47 @@ export const useLists = () => {
     [dispatch, listidOrders]
   )
 
-  return {lists, onCreateList, onRemoveList, onMoveList}
+  const onDragEnd = useCallback((result: DropResult) => {
+    console.log('onDragEnd result', result)
+    const destinationListId = result.destination?.droppableId
+    const destinationCardIndex = result.destination?.index
+    if (destinationListId === undefined || destinationCardIndex === undefined) return
 
+    const sourceListid = result.source.droppableId
+    const sourceCardIndex = result.source.index
+
+    if (destinationListId === sourceListid) {
+      // 같은 목록에서 카드 옮기기
+      const cardidOrders = listidCardidOrders[destinationListId]
+
+      dispatch(
+        LC.setListidCardids({
+          listid: destinationListId,
+          cardids: U.swapItemsInArray(cardidOrders, sourceCardIndex, destinationCardIndex)
+        })
+      )
+    } else {
+      // 다른 목록에서 카드 옮기기
+      const sourceCardidOrders = listidCardidOrders[sourceListid]
+      dispatch(
+        LC.setListidCardids({
+          listid: sourceListid,
+          cardids: U.removeItemAtIndexInArray(sourceCardidOrders, sourceCardIndex)
+        })
+      )
+      const destinationCardidOrders = listidCardidOrders[destinationListId]
+      dispatch(
+        LC.setListidCardids({
+          listid: destinationListId,
+          cardids: U.insertItemAtIndexInArray(
+            destinationCardidOrders,
+            destinationCardIndex,
+            result.draggableId
+          )
+        })
+      )
+    }
+  }, [])
+
+  return {lists, onCreateList, onRemoveList, onMoveList, onDragEnd}
 }

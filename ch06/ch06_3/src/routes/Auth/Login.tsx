@@ -1,15 +1,14 @@
 import type {ChangeEvent} from 'react'
-import {useState, useCallback} from 'react'
+import {useState, useCallback, useEffect} from 'react'
 import {Link, useNavigate} from 'react-router-dom'
 import {useAuth} from '../../contexts'
-import * as D from '../../data'
+import * as U from '../../utils'
 
-type SignUpFormType = Record<'email' | 'password' | 'confirmPassword', string>
-const initialFormState = {email: D.randomEmail(), password: '1', confirmPassword: '1'}
+type LoginFormType = Record<'email' | 'password', string>
+const initialFormState = {email: '', password: ''}
 
 export default function Login() {
-  const [{email, password, confirmPassword}, setForm] =
-    useState<SignUpFormType>(initialFormState)
+  const [{email, password}, setForm] = useState<LoginFormType>(initialFormState)
 
   const changed = useCallback(
     (key: string) => (e: ChangeEvent<HTMLInputElement>) => {
@@ -19,16 +18,21 @@ export default function Login() {
   )
 
   const Navigate = useNavigate()
-  const {signup} = useAuth()
-  const createAccount = useCallback(() => {
-    console.log(email, password, confirmPassword)
-    if (password === confirmPassword) {
-      signup(email, password, () => Navigate('/'))
-    } else alert('password is not equal to confirmPassword')
-  }, [email, password, confirmPassword, Navigate, signup])
+  const {login} = useAuth()
+  const loginAccount = useCallback(() => {
+    login(email, password, () => Navigate('/'))
+  }, [email, password, Navigate, login])
+
+  useEffect(() => {
+    U.readObjectP<LoginFormType>('user')
+      .then(user => {
+        if (user) setForm(user)
+      })
+      .catch(e => {})
+  }, [])
 
   return (
-    <div className="flex flex-col min-h-screen border-gray-300 border bg-gray-100 rounded-xl shadow-xl">
+    <div className="flex flex-col min-h-screen bg-gray-100 border border-gray-300 shadow-xl rounded-xl">
       <div className="flex flex-col items-center justify-center flex-1 max-w-sm px-2 mx-auto">
         <div className="w-full px-6 py-8 text-black bg-white rounded shadow-md">
           <h1 className="mb-8 text-2xl text-center text-primary">Sign Up</h1>
@@ -48,25 +52,14 @@ export default function Login() {
             value={password}
             onChange={changed('password')}
           />
-          <input
-            type="password"
-            className="w-full p-3 mb-4 input input-primary"
-            name="confirm_password"
-            placeholder="Confirm password"
-            value={confirmPassword}
-            onChange={changed('confirmPassword')}
-          />
-          <button
-            type="submit"
-            className="w-full btn btn-primary"
-            onClick={createAccount}>
-            Create Account
+          <button type="submit" className="w-full btn btn-primary" onClick={loginAccount}>
+            Login
           </button>
         </div>
         <div className="mt-6 text-gray-dark">
-          Already have an account?
-          <Link className="btn btn-link btn-primary" to="/login/">
-            Login
+          Create Account?
+          <Link className="btn btn-link btn-primary" to="/signup">
+            SignUp
           </Link>
         </div>
       </div>
